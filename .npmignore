@@ -2,6 +2,7 @@
 .gitignore
 node_modules
 examples
+benchmark
 source
 test
 tsconfig.json
