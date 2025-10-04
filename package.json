@@ -10,7 +10,8 @@
     "dry-update": "tsc",
     "patch": "tsc && npm version patch && git push --tags && npm publish",
     "release": "tsc && npm version minor && git push --tags && npm publish",
-    "test": "node --experimental-transform-types --no-warnings test/test.ts"
+    "test": "node --experimental-transform-types --no-warnings test/test.ts",
+    "bench": "node --experimental-transform-types --no-warnings benchmark/benchmark.ts"
   },
   "keywords": [
     "ascii",
@@ -28,6 +29,7 @@
   },
   "type": "module",
   "devDependencies": {
-    "@types/node": "^24.3.0"
+    "@types/node": "^24.3.0",
+    "tinybench": "^5.0.1"
   }
 }
