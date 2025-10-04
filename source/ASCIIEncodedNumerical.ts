@@ -6,10 +6,12 @@ const charToDigitMap = new Uint8Array(128);
 const incrementMap = new Uint8Array(128);
 const decrementMap = new Uint8Array(128);
 
+//We prepare important constants
 const zeroCharValue: number = digitToCharMap[0];
 const oneCharValue: number = digitToCharMap[1];
 const maxCharValue: number = digitToCharMap[63];
 
+//We fill necessary mappings for fast lookup and decrement/increment operations
 for (const [digit, charCode] of digitToCharMap.entries()) 
 {
     charToDigitMap[charCode] = digit;
