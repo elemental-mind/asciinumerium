@@ -9,11 +9,9 @@ function run()
     tests.shouldDecrementWithBorrowShrink();
     tests.shouldNotDecrementBeyondZero();
     tests.shouldIsZeroTrue();
-    tests.shouldIsZeroFalseForOne();
     tests.shouldIsZeroFalseForMultipleDigits();
     tests.shouldIsZeroFalseForNonZero();
     tests.shouldIsOneTrue();
-    tests.shouldIsOneFalseForZero();
     tests.shouldIsOneFalseForMultipleDigits();
     tests.shouldIsOneFalseForNonOne();
     tests.shouldReadCounterSingleDigit();

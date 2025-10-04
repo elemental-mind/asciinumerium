@@ -1,8 +1,21 @@
 // These are helper functions to keep track of a counter
 // A counter string might be encoded in string like "#<counter>|", e.g. "#5zAb|"
 
-export const zeroCharValue: number = 58;       // ASCII: ":"
-export const maxCharValue: number = zeroCharValue + 63;   // ASCII: "y"
+const digitToCharMap = Uint8Array.from(["0123456789", "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "'", '"'].join("").split("").map(char => char.charCodeAt(0)));
+const charToDigitMap = new Uint8Array(128);
+const incrementMap = new Uint8Array(128);
+const decrementMap = new Uint8Array(128);
+
+const zeroCharValue: number = digitToCharMap[0];
+const oneCharValue: number = digitToCharMap[1];
+const maxCharValue: number = digitToCharMap[63];
+
+for (const [digit, charCode] of digitToCharMap.entries()) 
+{
+    charToDigitMap[charCode] = digit;
+    if (digit === 0) decrementMap[charCode] = digitToCharMap[63]; else decrementMap[charCode] = digitToCharMap[digit - 1];
+    if (digit === 63) incrementMap[charCode] = digitToCharMap[0]; else incrementMap[charCode] = digitToCharMap[digit + 1];
+}
 
 export function isZero(text: string, firstDigitIndexInclusive: number, lastDigitIndexExclusive: number): boolean
 {
@@ -11,7 +24,7 @@ export function isZero(text: string, firstDigitIndexInclusive: number, lastDigit
 
 export function isOne(text: string, firstDigitIndexInclusive: number, lastDigitIndexExclusive: number): boolean
 {
-    return text.charCodeAt(lastDigitIndexExclusive - 1) - zeroCharValue === 1 && lastDigitIndexExclusive - firstDigitIndexInclusive === 1;
+    return text.charCodeAt(lastDigitIndexExclusive - 1) === digitToCharMap[1] && lastDigitIndexExclusive - firstDigitIndexInclusive === 1;
 }
 
 export function readUInt(text: string, firstDigitIndexInclusive: number, lastDigitIndexExclusive: number): number
@@ -19,7 +32,7 @@ export function readUInt(text: string, firstDigitIndexInclusive: number, lastDig
     let number = 0;
     for (let currentIndex = firstDigitIndexInclusive; currentIndex < lastDigitIndexExclusive;)
     {
-        number += text.charCodeAt(currentIndex++) - zeroCharValue;
+        number += charToDigitMap[text.charCodeAt(currentIndex++)];
         if (currentIndex < lastDigitIndexExclusive)
             number <<= 6;
     }
@@ -35,7 +48,7 @@ export function writeUInt(text: string, firstDigitIndexInclusive: number, lastDi
     else
         while (value > 0)
         {
-            digits.unshift((value & 63) + zeroCharValue);
+            digits.unshift(digitToCharMap[value & 63]);
             value >>= 6;
         }
     return text.slice(0, firstDigitIndexInclusive) + String.fromCharCode(...digits) + text.slice(lastDigitIndexExclusive);
@@ -48,16 +61,16 @@ export function incrementUInt(text: string, firstDigitIndexInclusive: number, la
 
     while (currentIndex--)
     {
-        // Increment current digit, add it to changed digits
-        changedDigits.unshift(text.charCodeAt(currentIndex) + 1);
+        const incrementedDigit = incrementMap[text.charCodeAt(currentIndex)];
+        changedDigits.unshift(incrementedDigit);
 
-        // If we went from 97 to 98 we can break, as 8 < 10, thus no carry needed, otherwise we need to correct the out of bounds value to a zero and handle carry logic.
-        if (changedDigits[0] <= maxCharValue) break; else changedDigits[0] = zeroCharValue;
+        //If we have not wrapped around, we can stop incrementing upstream digits
+        if (incrementedDigit !== zeroCharValue) break;
 
+        // If we overflowed all existing digits, add a new most significant digit and break the loop. As we have more digits now we need to extend
         if (currentIndex === firstDigitIndexInclusive)
         {
-            // If we overflowed all existing digits, add a new most significant digit and break the loop. As we have more digits now we need to extend
-            changedDigits.unshift(zeroCharValue + 1);
+            changedDigits.unshift(oneCharValue);
             break;
         }
     }
@@ -67,29 +80,27 @@ export function incrementUInt(text: string, firstDigitIndexInclusive: number, la
 
 export function decrementUInt(text: string, firstDigitIndexInclusive: number, lastDigitIndexExclusive: number): string
 {
-    if (isZero(text, firstDigitIndexInclusive, lastDigitIndexExclusive)) throw new Error("Can not decrement. Value at zero. ");
     let changedDigits = [];
     let currentIndex = lastDigitIndexExclusive;
 
     while (currentIndex--)
     {
-        // Decrement current digit and add it to changed digits
-        changedDigits.unshift(text.charCodeAt(currentIndex) - 1);
+        const decrementedDigit = decrementMap[text.charCodeAt(currentIndex)];
+        changedDigits.unshift(decrementedDigit);
 
-        //If we have something like 12 => 11. We're ok
-        if (changedDigits[0] > zeroCharValue) break;
+        //If we have not wrapped around we are good
+        if (decrementedDigit !== maxCharValue && decrementedDigit !== zeroCharValue) break;
 
-        // We either have something like 10 => 09, or something like 11 => 10. In either case we break, but we need to remove digits in he 09 case.
-        if (changedDigits[0] === zeroCharValue)
+        // When we have something like a 09 for example, we can ditch the 0
+        if (decrementedDigit === zeroCharValue && currentIndex === firstDigitIndexInclusive && currentIndex !== lastDigitIndexExclusive)
         {
-            //Case 09
-            if (currentIndex === firstDigitIndexInclusive) changedDigits.shift();
+            changedDigits.shift();
             break;
         }
 
-        //We have a 1 => 1<-1> and correct that to 19
-        changedDigits[0] = maxCharValue;
+        //If we decremented a zero we throw an errorx
+        if (decrementedDigit === maxCharValue && currentIndex === firstDigitIndexInclusive) throw new Error("Can not decrement. Value at zero. ");
     }
-    // Update the text with the new digit values
+
     return text.slice(0, currentIndex) + String.fromCharCode(...changedDigits) + text.slice(lastDigitIndexExclusive);
 }
