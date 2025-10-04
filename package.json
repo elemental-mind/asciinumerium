@@ -1,0 +1,33 @@
+{
+  "name": "asciinumerium",
+  "version": "1.0.0",
+  "description": "A TypeScript library for encoding and decoding unsigned integers using ASCII characters. Provides functions to increment, decrement, read, write, and check values in compact ASCII-encoded numerical representations.",
+  "main": "distribution/ASCIIEncodedNumerical.js",
+  "exports": {
+    ".": "./distribution/ASCIIEncodedNumerical.js"
+  },
+  "scripts": {
+    "dry-update": "tsc",
+    "patch": "tsc && npm version patch && git push --tags && npm publish",
+    "release": "tsc && npm version minor && git push --tags && npm publish",
+    "test": "node --experimental-transform-types --no-warnings test/test.ts"
+  },
+  "keywords": [
+    "ascii",
+    "encoding",
+    "numerical",
+    "typescript",
+    "utility",
+    "compact-encoding"
+  ],
+  "author": "Magnus Meseck",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elemental-mind/asciinumerium.git"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^24.3.0"
+  }
+}
