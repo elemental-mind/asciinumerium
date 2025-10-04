@@ -5,6 +5,9 @@ Provides functions to read, write, increment, decrement and check values in comp
 
 It's super tiny, extremely fast and tree-shakeable.
 
+This library was mainly created for use cases where strings and numbers would be interleaved and where an ArrayBuffer might hinder development ergnomics, but where you'd still like the memory benefits of single-byte encoded count trackers etc., as V8 for example stores ASCII-encodable strings as 8 bit arrays.
+Think strings like `...\<key>#\<count>|\<key>#\<count>...` e.g. `"id_xyz#900|id_abc#57"`. 
+
 ## Features
 
 - **ASCII Encoding/Decoding**: Encode unsigned integers into compact ASCII strings and decode them back
@@ -22,7 +25,8 @@ npm install asciinumerium
 
 ### Character ranges & identifying numbers
 
-> This library encodes numbers from 0 to 63 into the character range from ASCII 58 (":") to ASCII 121 ("y") for efficiency reasons. You can not use any characters in this range as delimiters for your numbers.
+This library encodes numbers from 0 to 63 into the character range from ASCII 58 (":") to ASCII 121 ("y") in one contiguous range for efficiency reasons. 
+> Important: You can not use any characters in this range as delimiters for your numbers.
 
 ## Usage
 
@@ -38,7 +42,7 @@ const decoded = readUInt("#y|", 1, 2); // Decode back to number
 console.log(decoded); // 42
 ```
 
-### Incrementing Values
+### Incrementing/Decrementing Values
 
 ```typescript
 import { incrementUInt } from 'asciinumerium';
