@@ -1,5 +1,6 @@
 // These are helper functions to keep track of a counter
-// counter string is encoded in string like "#<counter>|", e.g. "#5zAb|"
+// A counter string might be encoded in string like "#<counter>|", e.g. "#5zAb|"
+
 export const zeroCharValue: number = 58;       // ASCII: ":"
 export const maxCharValue: number = zeroCharValue + 63;   // ASCII: "y"
 
