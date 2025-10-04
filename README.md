@@ -11,7 +11,7 @@ Think strings like `...\<key>#\<count>|\<key>#\<count>...` e.g. `"id_xyz#900|id_
 ## Features
 
 - **ASCII Encoding/Decoding**: Encode unsigned integers into compact ASCII strings and decode them back
-- **Increment/Decrement Operations**: Perform arithmetic operations directly on encoded strings
+- **Increment/Decrement Operations**: Performant arithmetic operations directly on encoded strings minimizing changed digits.
 - **Value Checks**: Check if an encoded value is zero or one
 - **Compact Representation**: Uses a custom ASCII-based encoding for efficient storage
 
@@ -25,8 +25,7 @@ npm install asciinumerium
 
 ### Character ranges & identifying numbers
 
-This library encodes numbers from 0 to 63 into the character range from ASCII 58 (":") to ASCII 121 ("y") in one contiguous range for efficiency reasons. 
-> Important: You can not use any characters in this range as delimiters for your numbers.
+This library maps numbers from 0 to 63 onto the following character set: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'"`. This means `0 => 0` all the way to `63 => "` to then wrap around to `64 => 10` and `127 => 1"` and so forth.
 
 ## Usage
 
