@@ -29,6 +29,34 @@ export function isOne(text: string, firstDigitIndexInclusive: number, lastDigitI
     return text.charCodeAt(lastDigitIndexExclusive - 1) === digitToCharMap[1] && lastDigitIndexExclusive - firstDigitIndexInclusive === 1;
 }
 
+export function encodeUIntToASCII(value: number)
+{
+    if (value < 0) throw new Error("Can not encode negative numbers");
+    const digits = [];
+    if
+        (value === 0) digits.push(zeroCharValue);
+    else
+        while (value > 0)
+        {
+            digits.unshift(digitToCharMap[value & 63]);
+            value >>= 6;
+        }
+    return String.fromCharCode(...digits);
+}
+
+export function decodeUIntFromASCII(encodedNumber: string)
+{
+    let number = 0;
+    const numLength = encodedNumber.length;
+    for (let currentIndex = 0; currentIndex < numLength;)
+    {
+        number += charToDigitMap[encodedNumber.charCodeAt(currentIndex++)];
+        if (currentIndex < numLength)
+            number <<= 6;
+    }
+    return number;
+}
+
 export function readUInt(text: string, firstDigitIndexInclusive: number, lastDigitIndexExclusive: number): number
 {
     let number = 0;
