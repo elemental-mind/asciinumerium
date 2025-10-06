@@ -64,6 +64,17 @@ console.log(isOne("#;|", 1, 2)); // true
 
 ### Functions
 
+- **`encodeUIntToASCII(value: number): string`**
+  - Encodes an unsigned integer into an ASCII-encoded string using a custom base-64 like encoding.
+  - `value`: The unsigned integer to encode. Must be non-negative.
+  - Returns: The ASCII-encoded string representation of the value.
+  - Throws: Error if the value is negative.
+
+- **`decodeUIntFromASCII(encodedNumber: string): number`**
+  - Decodes an ASCII-encoded string back into an unsigned integer.
+  - `encodedNumber`: The ASCII-encoded string to decode.
+  - Returns: The decoded unsigned integer.
+
 - **`readUInt(text: string, firstDigitIndexInclusive: number, lastDigitIndexExclusive: number): number`**
   - Decodes an unsigned integer from the specified substring of the text.
   - `text`: The string containing the encoded value.
