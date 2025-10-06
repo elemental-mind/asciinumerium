@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { incrementUInt, decrementUInt, isZero, isOne, readUInt, writeUInt } from "./ASCIIEncodedNumerical.ts";
+import { incrementUInt, decrementUInt, isZero, isOne, readUInt, writeUInt, encodeUIntToASCII, decodeUIntFromASCII } from "./ASCIIEncodedNumerical.ts";
 
 export class ASCIIEncodedNumericalTests
 {
@@ -110,5 +110,71 @@ export class ASCIIEncodedNumericalTests
     {
         const t = "#a|";
         assert.equal(writeUInt(t, 1, 2, 0), "#0|");
+    }
+
+    shouldEncodeZero()
+    {
+        assert.equal(encodeUIntToASCII(0), "0");
+    }
+
+    shouldEncodeOne()
+    {
+        assert.equal(encodeUIntToASCII(1), "1");
+    }
+
+    shouldEncodeSixtyThree()
+    {
+        assert.equal(encodeUIntToASCII(63), '"');
+    }
+
+    shouldEncodeSixtyFour()
+    {
+        assert.equal(encodeUIntToASCII(64), "10");
+    }
+
+    shouldEncodeLargeNumber()
+    {
+        // 63*64 + 63 = 4095 + 63 = 4158, encoded as '""'
+        assert.equal(encodeUIntToASCII(63 * 64 + 63), '""');
+    }
+
+    shouldThrowOnNegativeEncode()
+    {
+        assert.throws(() => encodeUIntToASCII(-1));
+    }
+
+    shouldDecodeZero()
+    {
+        assert.equal(decodeUIntFromASCII("0"), 0);
+    }
+
+    shouldDecodeOne()
+    {
+        assert.equal(decodeUIntFromASCII("1"), 1);
+    }
+
+    shouldDecodeSixtyThree()
+    {
+        assert.equal(decodeUIntFromASCII('"'), 63);
+    }
+
+    shouldDecodeSixtyFour()
+    {
+        assert.equal(decodeUIntFromASCII("10"), 64);
+    }
+
+    shouldDecodeLargeNumber()
+    {
+        assert.equal(decodeUIntFromASCII('""'), 63 * 64 + 63);
+    }
+
+    shouldRoundTrip()
+    {
+        const values = [0, 1, 42, 63, 64, 12345, 100000];
+        for (const value of values) {
+            const encoded = encodeUIntToASCII(value);
+            const decoded = decodeUIntFromASCII(encoded);
+            assert.equal(decoded, value);
+        }
     }
 }

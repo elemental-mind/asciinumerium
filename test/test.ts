@@ -21,6 +21,18 @@ function run()
     tests.shouldWriteCounterSingleDigit();
     tests.shouldWriteCounterMultipleDigits();
     tests.shouldWriteCounterZero();
+    tests.shouldEncodeZero();
+    tests.shouldEncodeOne();
+    tests.shouldEncodeSixtyThree();
+    tests.shouldEncodeSixtyFour();
+    tests.shouldEncodeLargeNumber();
+    tests.shouldThrowOnNegativeEncode();
+    tests.shouldDecodeZero();
+    tests.shouldDecodeOne();
+    tests.shouldDecodeSixtyThree();
+    tests.shouldDecodeSixtyFour();
+    tests.shouldDecodeLargeNumber();
+    tests.shouldRoundTrip();
 
     console.log("All tests passed");
 }
