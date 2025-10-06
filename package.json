@@ -1,6 +1,6 @@
 {
   "name": "asciinumerium",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A TypeScript library for encoding and decoding unsigned integers using ASCII characters. Provides functions to increment, decrement, read, write, and check values in compact ASCII-encoded numerical representations.",
   "main": "distribution/ASCIIEncodedNumerical.js",
   "exports": {
